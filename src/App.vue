@@ -4,17 +4,17 @@
     <h2>Please enter your AFC PIN Below.</h2>
     <input type="password" maxlength="4" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="pininput" placeholder="1234" ref="pinInput" @keydown.enter="sendAuthenticationAttempt(this.$refs.pinInput.value)">
   </div>
-  <GigComponent :userAuthenticated="authenticated" :user="user"></GigComponent>
+  <ActComponent :userAuthenticated="authenticated" :user="user"></ActComponent>
 </template>
 
 <script>
-import GigComponent from "./components/GigComponent.vue"
+import ActComponent from "./components/GigComponent.vue"
 import io from "socket.io-client";
 
 export default {
   name: 'App',
   components: {
-    GigComponent
+    ActComponent
   },
   data() {
     return {

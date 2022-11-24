@@ -1,7 +1,7 @@
 <template>
 <div class="modal" ref="modal" v-if="deletionModalOpenProp">
     <h1>HOLD UP!</h1>
-    <p>Are you sure you want to delete this event? There's no going back.</p>
+    <p>Are you sure you want to delete this act? There's no going back.</p>
     <p><button class="deletebutton" @click="deleteEvent">YES, LET'S DELETE IT</button>
     <button @click="closeModalAnimation">NO, GO BACK</button></p>
 </div>
@@ -15,7 +15,7 @@ export default {
     name: 'DeletionModal',
     props: {
         deletionModalOpenProp: Boolean,
-        gigToDelete: String,
+        actToDelete: String,
     },
     emits: ["closedeletemodal", "eliminateEvent"],
     methods: {
@@ -28,8 +28,8 @@ export default {
             this.$emit('closedeletemodal')
         },
         deleteEvent() {
-            console.log(this.gigToDelete)
-            this.$emit("eliminateEvent", this.gigToDelete)
+            console.log(this.actToDelete)
+            this.$emit("eliminateEvent", this.actToDelete)
             this.closeModalAnimation()
         }
     },

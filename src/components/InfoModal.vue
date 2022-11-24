@@ -3,8 +3,6 @@
         <h1 class="header">ORGANIZER CONTACT INFO</h1>
         <p><b>Name</b>: {{ ContactName }}</p>
         <p><b>Email</b>: {{ ContactEmail }}</p>
-        <p v-if="ContactNumber != `Not provided`"><b>Phone Number</b>: {{ ContactNumber }}</p>
-        <p v-if="!RegisteredByOrganizer">Registered by AFC Exec. Potentially inaccurate information</p>
         <button @click="closeModalAnimation" class="closeButton">DONE</button>
     </div>
     <div class="darkenbackground" ref="darkenbackground" v-if="infoModalOpenProp" @click="closeModalAnimation"

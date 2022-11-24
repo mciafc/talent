@@ -2,51 +2,57 @@
     <div v-if="userAuthenticated">
         <p class="bindToTop">Welcome back, <span style="color: rgb(229, 157, 22)" v-if="user.isExec"><b>[EXEC]
                 </b></span> <span v-if="user.FirstName == `Ethan` && user.LastName == `Ross`">Lower than General Member </span>{{ user.FirstName }}</p>
-        <h1 class="upcomingEvents">Upcoming Events:</h1>
+        <h1 class="upcomingEvents">This Year's Acts</h1>
         <!-- <button v-if="user.isExec" @click="this.execToolsEnabled = !this.execToolsEnabled">TOGGLE EXEC TOOLS</button> -->
-        <div v-if="this.gigs.length > 0" class="container">
-            <div class="gig" v-for="gig in this.gigs" :key="gig._id">
-                <div class="dropdownOuterBox" v-if="user.isExec" @click="openDropDown(gig._id)" @mouseleave="closeDropDown">
+        <div v-if="this.acts.length > 0" class="container">
+            <div class="act" v-for="act in reversedActs(this.acts)" :key="act._id">
+                <div class="dropdownOuterBox" v-if="user.isExec" @click="openDropDown(act._id)" @mouseleave="closeDropDown">
                     <svg class="dropdownMenu" viewBox="-95 -95 700 700">
                         <circle cx="256" cy="256" r="48"></circle>
                         <path
                             d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z">
                         </path>
                     </svg>
-                    <div class="dropdown" v-if="dropDownOpen == gig._id">
-                        <p @click="getOrganizerContactInfo(gig)" class="dropdownItem">View Contact Info</p>
-                        <p class="dropdownItem" @click="manageMembers(gig._id)">Manage Available Members</p>
-                        <p class="dropdownItem" style="color: rgb(255, 91, 91);" @click="confirmDelete(gig._id)">Delete</p>
+                    <div class="dropdown" v-if="dropDownOpen == act._id">
+                        <p @click="getOrganizerContactInfo(act)" class="dropdownItem">View Contact Info</p>
+                        <p class="dropdownItem" style="color: rgb(255, 91, 91);" @click="confirmDelete(act._id)">Delete</p>
                     </div>
                 </div>
-                <h1 class="gigName">{{ gig.gigName }}</h1>
-                <h3 class="organizationName">By: {{ gig.organizationName }}</h3>
-                <h4 class="dateRange">📅 {{ dateRange(gig.gigStartDate, gig.gigEndDate) }}</h4>
-                <p class="gigLocation">📌 <b>Location:</b> {{ gig.gigLocation }}</p>
-                <p v-if="user.isExec" class="paidJob">💵 <b>Paid Job:</b> <span v-if="gig.paidJob">Yes</span><span
-                        v-else>No</span></p>
-                <p class="employeesNeeded">👥 <b>Members Needed:</b> {{ employeesNeeded(gig.employeesNeeded) }}</p>
-                <h3 v-if="gig.additionalInformation != 'No additional details specified.'"
+                <h1 class="actName">{{ act.actName }}</h1>
+                <h3 class="organizationName">By: <span v-if="act.isClub" style="color:cornflowerblue;">CLUB</span> {{ act.organizerName }}</h3>
+                <h3 class="actDescription">Description</h3>
+                <p class="actDescriptionText">{{ act.actDescription }}</p>
+                <p class="actLocation"><b>Act Length:</b> ~{{act.actLength}} minutes</p>
+                <p class="actLocation" v-if="!act.isClub"><b>Act Members:</b> {{act.actMembers}}</p>
+                <h2 class="actEquipment">Equipment</h2>
+                <p class="equipmentItem" v-if="act.actEquipment.mics > 0">{{ act.actEquipment.mics }} Microphones</p>
+                <p v-else class="equipmentItem">❌ No Mics</p>
+                <p v-if="act.actEquipment.followspot" class="equipmentItem">✔️ Followspot</p>
+                <p v-else class="equipmentItem">❌ No Followspot</p>
+                <p v-if="act.actEquipment.cam" class="equipmentItem">✔️ Stage Cam</p>
+                <p v-else class="equipmentItem">❌ No Stage Cam</p>
+                <h2 class="actEquipment">Additional Equipment</h2>
+                <p class="equipmentItem">{{act.actEquipment.other}}</p>
+                <h3 v-if="act.additionalInfo != 'No additional details specified.'"
                     class="additionalInformation">Additional Info:</h3>
-                <p v-if="gig.additionalInformation != 'No additional details specified.'" class="additionalInformationText">
-                    {{ gig.additionalInformation }}</p>
-                <p v-if="gig.registeredByOrganizer == false" class="registeredByOrganizer">Registered by AFC Exec.
+                <p v-if="act.additionalInfo != 'No additional details specified.'" class="additionalInformationText">
+                    {{ act.additionalInfo }}</p>
+                <p v-if="act.registeredByOrganizer == false" class="registeredByOrganizer">Registered by AFC Exec.
                     (Information may be inaccurate)</p>
                 <div
-                    v-if="employeesAvailable(people, gig._id) != `There was an issue finding the availabilities for this event.`">
-                    <button @click="this.socket.emit('available', user, gig._id)" class="availableButton">AVAILABLE? CLICK HERE</button>
-                    <p class="employeesAvailable"><span v-if="employeesAvailable(people, gig._id).length > 0">{{ employeesAvailable(people, gig._id).length }}</span><span v-else>No</span> member<span
-                            v-if="employeesAvailable(people, gig._id).length > 1 || employeesAvailable(people, gig._id).length == 0">s
+                    v-if="employeesAvailable(people, act._id) != `There was an issue finding the availabilities for this event.`">
+                    <button @click="this.socket.emit('available', user, act._id)" class="availableButton">AVAILABLE? CLICK HERE</button>
+                    <p class="employeesAvailable"><span v-if="employeesAvailable(people, act._id).length > 0">{{ employeesAvailable(people, act._id).length }}</span><span v-else>No</span> member<span
+                            v-if="employeesAvailable(people, act._id).length > 1 || employeesAvailable(people, act._id).length == 0">s
                             are</span><span v-else> is</span> marked as available.</p>
                 </div>
             </div>
         </div>
         <div v-else>
-            <h1>There are no upcoming events currently scheduled.</h1>
+            <h1>There are no upcoming events currently scheduled. {{acts}}</h1>
         </div>
-        <ManageMembersModal :ModalOpenProp="managingMembersModalOpen" :AvailableMembers="managingMembers" :GigId="managingMembersGigId" @closemodal="closeManagingMembers" />
         <InfoModal :infoModalOpenProp="organizerContactInfo.modalOpen" :ContactEmail="organizerContactInfo.email" :RegisteredByOrganizer="organizerContactInfo.regByOrganizer" :ContactNumber="organizerContactInfo.number" :ContactName="organizerContactInfo.name" @closeinfomodal="closeOrganizerContactInfo" />
-        <DeletionModal :deletionModalOpenProp="deleteConfirmation" :gigToDelete="markedForDeletion" @closedeletemodal="deleteConfirmation = false" @eliminateEvent="requestEventDeletion(markedForDeletion)" />
+        <DeletionModal :deletionModalOpenProp="deleteConfirmation" :actToDelete="markedForDeletion" @closedeletemodal="deleteConfirmation = false" @eliminateEvent="requestEventDeletion(markedForDeletion)" />
     </div>
 </template>
 
@@ -54,14 +60,12 @@
 import io from "socket.io-client";
 import DeletionModal from "./DeletionModal.vue"
 import InfoModal from "./InfoModal.vue"
-import ManageMembersModal from "./ManageMembersModal.vue"
 
 export default {
-    name: 'GigComponent',
+    name: 'actComponent',
     components: {
         DeletionModal,
         InfoModal,
-        ManageMembersModal
     },
     props: {
         userAuthenticated: Boolean,
@@ -70,9 +74,9 @@ export default {
     data() {
         return {
             socket: {},
-            gigs: {},
+            acts: {},
             people: {},
-            pastgigs: {},
+            pastacts: {},
             markedForDeletion: "",
             execToolsEnabled: false,
             dropDownOpen: undefined,
@@ -80,38 +84,26 @@ export default {
             organizerContactInfo: {},
             managingMembersModalOpen: false,
             managingMembers: {},
-            managingMembersGigId: ""
+            managingMembersactId: ""
         }
     },
     created() {
-        this.socket = io("https://io.mciafc.com/gigs")
+        this.socket = io("https://io.mciafc.com/talent")
     },
     mounted() {
-        this.socket.on("upcominggigs", data => {
-            this.gigs = data
-        })
-        this.socket.on("pastgigs", data => {
-            this.pastgigs = data
+        this.socket.on("acts", data => {
+            this.acts = data
         })
         this.socket.on("deleteResponse", () => {
             this.execToolsEnabled = false
             this.markedForDeletion = ""
         })
-        this.socket.on("availability", data => {   
-            this.saveAvailabilities(data)
-        })
     },
     methods: {
-        getOrganizerContactInfo(gig) {
-            this.organizerContactInfo.name = gig.organizerName
-            this.organizerContactInfo.email = gig.organizerContactEmail
-            this.organizerContactInfo.number = gig.organizerContactNumber
-            this.organizerContactInfo.regByOrganizer = gig.registeredByOrganizer
+        getOrganizerContactInfo(act) {
+            this.organizerContactInfo.name = act.organizerName
+            this.organizerContactInfo.email = act.organizerEmail
             this.organizerContactInfo.modalOpen = true
-            console.log(this.people)
-        },
-        saveAvailabilities(avdata) {
-            this.people = avdata
             console.log(this.people)
         },
         closeOrganizerContactInfo() {
@@ -120,34 +112,34 @@ export default {
             this.organizerContactInfo.number = undefined
             this.organizerContactInfo.modalOpen = false
         },   
-        manageMembers(gigId) {
-            this.socket.emit('getavailability', gigId)
+        manageMembers(actId) {
+            this.socket.emit('getavailability', actId)
             this.managingMembersModalOpen = true
-            this.managingMembersGigId = gigId
-            this.managingMembers = this.employeesAvailable(gigId)
+            this.managingMembersactId = actId
+            this.managingMembers = this.employeesAvailable(actId)
         },
         closeManagingMembers() {
             this.managingMembersModalOpen = false;
             this.managingMembers = {}
         },
-        confirmDelete(gigId) {
+        confirmDelete(actId) {
             this.markedForDeletion = this.dropDownOpen
-            this.deleteConfirmation = gigId
+            this.deleteConfirmation = actId
         },
-        requestEventDeletion(gigId) {
-            console.log(gigId)
-            this.socket.emit("deleteRequest", gigId)
+        requestEventDeletion(actId) {
+            console.log(actId)
+            this.socket.emit("deleteRequest", actId)
         },
-        openDropDown(gigId) {
-            return this.dropDownOpen = gigId
+        openDropDown(actId) {
+            return this.dropDownOpen = actId
         },
         closeDropDown() {
             return this.dropDownOpen = undefined
         },
-        removeMember(gigId) {
-            console.log(gigId)
+        removeMember(actId) {
+            console.log(actId)
             this.closeManagingMembers()
-            this.manageMembers(gigId)
+            this.manageMembers(actId)
         }
     },
     computed: {
@@ -157,6 +149,11 @@ export default {
                     return amountSpecified
                 }
                 return "As many as possible."
+            }
+        },
+        reversedActs() {
+            return function (acts) {
+                return acts.slice().reverse()
             }
         },
         trueOrFalse() {
@@ -185,9 +182,9 @@ export default {
             }
         },
         employeesAvailable() {
-            return function (people, gigId) {
+            return function (people, actId) {
                 try {
-                    let value = people.find(o => o.gigId === gigId)
+                    let value = people.find(o => o.actId === actId)
                     if (value) {
                         let members = value.availableMembers
                         return members
@@ -217,7 +214,7 @@ export default {
     }
 }
 
-.gig {
+.act {
     background-color: #31303080;
     box-shadow: .8rem .8rem 1.4rem #1a1a1a,
         -.2rem -.2rem 1.8rem #272727;
@@ -375,7 +372,7 @@ button:hover {
     transition: 200ms all;
 }
 
-.gigName {
+.actName {
     font-weight: 600;
     position: relative;
     margin-left: 50px;
@@ -394,9 +391,9 @@ button:hover {
     top: -10px;
 }
 
-.gigLocation {
+.actLocation {
     position: relative;
-    top: -15px;
+    top: -35px;
 }
 
 .paidJob {
@@ -431,6 +428,26 @@ button:hover {
 .employeesAvailable {
     position: relative;
     top: -20px;
+}
+
+.actDescription {
+    position: relative;
+    top: -25px;
+}
+
+.actDescriptionText {
+    position: relative;
+    top: -35px;
+}
+
+.actEquipment {
+    position: relative;
+    top: -50px;
+}
+
+.equipmentItem {
+    position: relative;
+    top: -55px;
 }
 
 /* Width */
