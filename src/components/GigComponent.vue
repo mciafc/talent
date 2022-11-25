@@ -3,6 +3,7 @@
         <p class="bindToTop">Welcome back, <span style="color: rgb(229, 157, 22)" v-if="user.isExec"><b>[EXEC]
                 </b></span> <span v-if="user.FirstName == `Ethan` && user.LastName == `Ross`">Lower than General Member </span>{{ user.FirstName }}</p>
         <h1 class="upcomingEvents">This Year's Acts</h1>
+        <p>Total Acts: {{ acts.length }} - Approx. Length: {{ totalLength(acts) }} minutes</p>
         <!-- <button v-if="user.isExec" @click="this.execToolsEnabled = !this.execToolsEnabled">TOGGLE EXEC TOOLS</button> -->
         <div v-if="this.acts.length > 0" class="container">
             <div class="act" v-for="act in reversedActs(this.acts)" :key="act._id">
@@ -149,6 +150,28 @@ export default {
                     return amountSpecified
                 }
                 return "As many as possible."
+            }
+        },
+        totalLength() {
+            return function (acts) {
+                console.log(acts.length)
+                if (acts.length <= 0) {
+                    return 0
+                }
+                let listOfLengths = []
+                let Length = 0
+                try {
+                    acts.forEach((act) => {
+                        listOfLengths.push(act.actLength)
+                    })
+                    for (let i of listOfLengths) {
+                        Length += i
+                    }
+                    return Length
+                } catch(e) {
+                    console.error(e)
+                    return 0
+                }
             }
         },
         reversedActs() {
@@ -409,12 +432,12 @@ button:hover {
 .additionalInformation {
     position: relative;
     font-size: 25px;
-    top: -15px;
+    top: -55px;
 }
 
 .additionalInformationText {
     position: relative;
-    top: -35px;
+    top: -65px;
 }
 
 .registeredByOrganizer {
