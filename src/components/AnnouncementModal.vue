@@ -66,7 +66,7 @@ export default {
                 if (this.emailBody.length == 0) {
                     return this.emailStatus = "Failed to send: Body cannot be empty."
                 }
-                this.socket.emit("sendEmail", this.emailSubject, this.emailBody, this.act)
+                this.socket.emit("sendEmail", this.emailSubject, this.emailBody, this.act, this.user)
             }
         }
     },
