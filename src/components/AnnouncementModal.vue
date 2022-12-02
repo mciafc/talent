@@ -33,7 +33,7 @@ export default {
         }
     },
     created() {
-        this.socket = io("https://io.mciafc.com/talent")
+        this.socket = io("http://localhost:7694/talent")
     },
     mounted() {
         this.socket.on("emailSent", () => {
@@ -171,7 +171,7 @@ export default {
     box-shadow: .8rem .8rem 1.4rem #151515,
         -.2rem -.2rem 1.8rem #272727;
     animation: fade-in 300ms forwards ease-out;
-    position: absolute;
+    position: fixed;
     margin: auto;
     left: 0;
     right: 0;
@@ -198,7 +198,7 @@ export default {
     background-color: #19191980;
     animation: blur 200ms forwards ease-out;
     opacity: 1;
-    position: absolute;
+    position: fixed;
     margin: 0;
     top: 0;
     left: 0;
