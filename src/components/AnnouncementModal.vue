@@ -61,7 +61,7 @@ export default {
                 console.log(this.emailSubject)
                 console.log(this.emailBody)
                 if (this.emailSubject.length == 0) {
-                    this.emailSubject = `RE: ${this.act.actName}`
+                    this.emailSubject = this.defaultSubjectLine(this.act.actName)
                 }
                 if (this.emailBody.length == 0) {
                     return this.emailStatus = "Failed to send: Body cannot be empty."
