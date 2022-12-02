@@ -3,7 +3,7 @@
         <p class="bindToTop">Welcome back, <span style="color: rgb(229, 157, 22)" v-if="user.isExec"><b>[EXEC]
                 </b></span> <span v-if="user.FirstName == `Ethan` && user.LastName == `Ross`">Lower than General Member </span>{{ user.FirstName }}</p>
         <h1 class="upcomingEvents">This Year's Acts</h1>
-        <p>Total Acts: {{ acts.length }} - Approx. Length: {{ totalLength(acts) }} minutes</p>
+        <p>Total Acts: {{ acts.length }} - Approx. Length: {{ totalLength(acts, 'all') }} mins ({{ totalLength(acts, "club") }} mins clubs, {{ totalLength(acts, "individual") }} mins individual)</p>
         <div class="dropdownOuterBox" v-if="user.isExec" @click="openDropDown('global')" @mouseleave="closeDropDown">
             <svg class="dropdownMenu" viewBox="-95 -95 700 700">
                 <circle cx="256" cy="256" r="48"></circle>
@@ -180,7 +180,7 @@ export default {
             }
         },
         totalLength() {
-            return function (acts) {
+            return function (acts, actType) {
                 console.log(acts.length)
                 if (acts.length <= 0) {
                     return 0
@@ -189,7 +189,17 @@ export default {
                 let Length = 0
                 try {
                     acts.forEach((act) => {
-                        listOfLengths.push(act.actLength)
+                        if (actType == "all") {
+                            listOfLengths.push(act.actLength)
+                        } else if (actType == "club") {
+                            if (act.isClub) {
+                                listOfLengths.push(act.actLength)
+                            }
+                        } else if (actType == "individual") {
+                            if (!act.isClub) {
+                                listOfLengths.push(act.actLength)
+                            }
+                        }
                     })
                     for (let i of listOfLengths) {
                         Length += i
