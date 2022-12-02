@@ -33,7 +33,7 @@ export default {
         }
     },
     created() {
-        this.socket = io("http://localhost:7694/talent")
+        this.socket = io("https://io.mciafc.com/talent")
     },
     mounted() {
         this.socket.on("emailSent", () => {
