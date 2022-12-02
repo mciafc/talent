@@ -4,6 +4,17 @@
                 </b></span> <span v-if="user.FirstName == `Ethan` && user.LastName == `Ross`">Lower than General Member </span>{{ user.FirstName }}</p>
         <h1 class="upcomingEvents">This Year's Acts</h1>
         <p>Total Acts: {{ acts.length }} - Approx. Length: {{ totalLength(acts) }} minutes</p>
+        <div class="dropdownOuterBox" v-if="user.isExec" @click="openDropDown('global')" @mouseleave="closeDropDown">
+            <svg class="dropdownMenu" viewBox="-95 -95 700 700">
+                <circle cx="256" cy="256" r="48"></circle>
+                <path
+                    d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-134.48-40.24a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z">
+                </path>
+            </svg>
+            <div class="dropdown" v-if="dropDownOpen == 'global'">
+                <p @click="openAnnouncementModal(globalActTemplate, this.user)" class="dropdownItem">Make an announcement (all)</p>
+            </div>
+        </div>
         <!-- <button v-if="user.isExec" @click="this.execToolsEnabled = !this.execToolsEnabled">TOGGLE EXEC TOOLS</button> -->
         <div v-if="this.acts.length > 0" class="container">
             <div class="act" v-for="act in reversedActs(this.acts)" :key="act._id">
@@ -16,6 +27,7 @@
                     </svg>
                     <div class="dropdown" v-if="dropDownOpen == act._id">
                         <p @click="getOrganizerContactInfo(act)" class="dropdownItem">View Contact Info</p>
+                        <p class="dropdownItem" @click="openAnnouncementModal(act, user)">Make an announcement</p>
                         <p class="dropdownItem" style="color: rgb(255, 91, 91);" @click="confirmDelete(act._id)">Delete</p>
                     </div>
                 </div>
@@ -54,6 +66,7 @@
         </div>
         <InfoModal :infoModalOpenProp="organizerContactInfo.modalOpen" :ContactEmail="organizerContactInfo.email" :RegisteredByOrganizer="organizerContactInfo.regByOrganizer" :ContactNumber="organizerContactInfo.number" :ContactName="organizerContactInfo.name" @closeinfomodal="closeOrganizerContactInfo" />
         <DeletionModal :deletionModalOpenProp="deleteConfirmation" :actToDelete="markedForDeletion" @closedeletemodal="deleteConfirmation = false" @eliminateEvent="requestEventDeletion(markedForDeletion)" />
+        <AnnounceModal :announceModalOpenProp="announcementModal.isOpen" :act="announcementModal.act" :user="announcementModal.user" @closeannouncemodal="closeAnnounceModal" />
     </div>
 </template>
 
@@ -61,12 +74,14 @@
 import io from "socket.io-client";
 import DeletionModal from "./DeletionModal.vue"
 import InfoModal from "./InfoModal.vue"
+import AnnounceModal from "./AnnouncementModal.vue"
 
 export default {
     name: 'actComponent',
     components: {
         DeletionModal,
         InfoModal,
+        AnnounceModal,
     },
     props: {
         userAuthenticated: Boolean,
@@ -85,7 +100,11 @@ export default {
             organizerContactInfo: {},
             managingMembersModalOpen: false,
             managingMembers: {},
-            managingMembersactId: ""
+            managingMembersactId: "",
+            announcementModal: {},
+            globalActTemplate: {
+                actName: "global"
+            }
         }
     },
     created() {
@@ -107,6 +126,14 @@ export default {
             this.organizerContactInfo.modalOpen = true
             console.log(this.people)
         },
+        openAnnouncementModal(act, user) {
+            this.announcementModal.isOpen = true
+            this.announcementModal.act = act
+            this.announcementModal.user = user
+        },
+        closeAnnounceModal() {
+            this.announcementModal = {}
+        },  
         closeOrganizerContactInfo() {
             this.organizerContactInfo.name = undefined
             this.organizerContactInfo.email = undefined
