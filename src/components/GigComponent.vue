@@ -42,7 +42,7 @@
                 <p v-else class="equipmentItem">❌ No Mics</p>
                 <p v-if="act.actEquipment.followspot" class="equipmentItem">✔️ Followspot</p>
                 <p v-else class="equipmentItem">❌ No Followspot</p>
-                <p v-if="act.actEquipment.cam" class="equipmentItem">✔️ Stage Cam</p>
+                <p v-if="act.actEquipment.camera" class="equipmentItem">✔️ Stage Cam</p>
                 <p v-else class="equipmentItem">❌ No Stage Cam</p>
                 <h2 class="actEquipment">Additional Equipment</h2>
                 <p class="equipmentItem">{{act.actEquipment.other}}</p>
