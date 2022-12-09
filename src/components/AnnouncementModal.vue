@@ -81,7 +81,7 @@ export default {
         },
     defaultSubjectLine() {
         return function (actName) {
-            if (actName != "global") {
+            if (!["global", "clubs"].includes(actName)) {
                 return `RE: ${actName} (Talent Show Act)`
             }
             return `UPDATE: Talent Show Info`
