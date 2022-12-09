@@ -81,7 +81,7 @@ export default {
         },
     defaultSubjectLine() {
         return function (actName) {
-            if (actName != "global") {
+            if (actName != "global" || "clubs") {
                 return `RE: ${actName} (Talent Show Act)`
             }
             return `UPDATE: Talent Show Info`

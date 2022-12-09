@@ -13,6 +13,7 @@
             </svg>
             <div class="dropdown" v-if="dropDownOpen == 'global'">
                 <p @click="openAnnouncementModal(globalActTemplate, this.user)" class="dropdownItem">Make an announcement (all)</p>
+                <p @click="openAnnouncementModal(clubActTemplate, this.user)" class="dropdownItem">Make an announcement (clubs)</p>
             </div>
         </div>
         <!-- <button v-if="user.isExec" @click="this.execToolsEnabled = !this.execToolsEnabled">TOGGLE EXEC TOOLS</button> -->
@@ -104,6 +105,9 @@ export default {
             announcementModal: {},
             globalActTemplate: {
                 actName: "global"
+            },
+            clubActTemplate: {
+                actName: "clubs"
             }
         }
     },
